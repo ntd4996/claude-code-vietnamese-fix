@@ -1,6 +1,6 @@
 # Claude Code Vietnamese IME Fix
 
-Fix lỗi gõ tiếng Việt trong Claude Code CLI với các bộ gõ OpenKey, EVKey, PHTV, Unikey... Hỗ trợ macOS, Linux và Windows (npm).
+Fix lỗi gõ tiếng Việt trong Claude Code CLI với các bộ gõ OpenKey, EVKey, PHTV, Unikey... Hỗ trợ **native installer** (macOS/Linux) và npm (Windows).
 
 ## Vấn đề
 
