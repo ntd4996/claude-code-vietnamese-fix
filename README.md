@@ -63,22 +63,6 @@ Tham khảo và cải tiến từ [PHTV](https://github.com/phamhungtien/PHTV).
 
 ---
 
-<div align="center">
-
-<img src="https://github-readme-stats.vercel.app/api?username=ntd4996&show_icons=true&theme=radical" alt="GitHub Stats" />
-
-<br/><br/>
-
-<h3>Support My Work | Ủng Hộ Tôi</h3>
-
-<a href="https://www.buymeacoffee.com/ntd4996">
-  <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=datnt&button_colour=FF5F5F&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" />
-</a>
-
-</div>
-
----
-
 ## Bản quyền
 
 © 2026 [datnt.dev](https://datnt.dev) | [GitHub](https://github.com/ntd4996)
