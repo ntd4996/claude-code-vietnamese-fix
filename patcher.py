@@ -10,7 +10,8 @@ Usage:
   python3 patcher.py --restore    Restore from backup
   python3 patcher.py --path FILE  Fix specific file
 
-Repository: https://github.com/manhit96/claude-code-vietnamese-fix
+Author: datnt (https://github.com/ntd4996)
+Repository: https://github.com/ntd4996/claude-code-vietnamese-fix
 License: MIT
 """
 
@@ -174,7 +175,7 @@ def find_bug_blocks_binary(data):
             break
         found_any = True
         abs_start, abs_end, block = result
-        if 'for(const c of vn)s=s.insert(c)' in block:
+        if 'for(const c of' in block and '.insert(c)' in block:
             patched_count += 1
             search_from = abs_end
             continue
@@ -245,14 +246,16 @@ def generate_fix_binary(v, original_length):
     off = v['update_offset']
     extra = v['extra_calls'] or ''
 
+    # Pick a 1-char state variable that doesn't shadow the input variable
+    # (avoids Temporal Dead Zone ReferenceError inside the let declaration)
+    sv = next(c for c in '_qwertyuiop' if c != inp)
+
     fix = (
         f'if(!{key}.backspace&&!{key}.delete&&{inp}.includes("\\x7F"))'
-        f'{{let n=({inp}.match(/\\x7f/g)||[]).length,'
-        f'vn={inp}.replace(/\\x7f/g,""),s={cur};'
-        f'while(n--)s=s.backspace();'
-        f'for(const c of vn)s=s.insert(c);'
-        f'{cur}.text!==s.text&&{txt}(s.text);'
-        f'{off}(s.offset);'
+        f'{{let {sv}={cur};'
+        f'for(const c of {inp}){{{sv}=c==="\\x7F"?{sv}.backspace():{sv}.insert(c)}}'
+        f'{cur}.text!=={sv}.text&&{txt}({sv}.text);'
+        f'{off}({sv}.offset);'
     )
     if extra:
         fix += f'{extra};'
@@ -345,11 +348,8 @@ def generate_fix(v):
     return (
         f'{PATCH_MARKER}'
         f'if({v["input"]}.includes("\\x7f")){{'
-        f'let _n=({v["input"]}.match(/\\x7f/g)||[]).length,'
-        f'_vn={v["input"]}.replace(/\\x7f/g,""),'
-        f'{v["state"]}={v["cur_state"]};'
-        f'for(let _i=0;_i<_n;_i++){v["state"]}={v["state"]}.backspace();'
-        f'for(const _c of _vn){v["state"]}={v["state"]}.insert(_c);'
+        f'let {v["state"]}={v["cur_state"]};'
+        f'for(const _c of {v["input"]}){{{v["state"]}=_c==="\\x7f"?{v["state"]}.backspace():{v["state"]}.insert(_c)}}'
         f'if(!{v["cur_state"]}.equals({v["state"]})){{'
         f'if({v["cur_state"]}.text!=={v["state"]}.text)'
         f'{v["update_text"]}({v["state"]}.text);'
@@ -449,10 +449,9 @@ def patch(file_path):
                 f.write(patched)
 
             # Verify
-            fix_sig = b'for(const c of vn)s=s.insert(c)'
             with open(file_path, 'rb') as f:
                 verified = f.read()
-            if fix_sig not in verified:
+            if b'for(const c of' not in verified or b'.insert(c)' not in verified:
                 raise RuntimeError("Verify failed: fix signature not found after write")
 
             resign_binary(file_path)
@@ -462,7 +461,7 @@ def patch(file_path):
 
         except Exception as e:
             print(f"\nLỗi: {e}", file=sys.stderr)
-            print("Báo lỗi tại: https://github.com/manhit96/claude-code-vietnamese-fix/issues",
+            print("Báo lỗi tại: https://github.com/ntd4996/claude-code-vietnamese-fix/issues",
                   file=sys.stderr)
             if os.path.exists(backup_path):
                 shutil.copy2(backup_path, file_path)
@@ -505,7 +504,7 @@ def patch(file_path):
 
     except Exception as e:
         print(f"\nLỗi: {e}", file=sys.stderr)
-        print("Báo lỗi tại: https://github.com/manhit96/claude-code-vietnamese-fix/issues",
+        print("Báo lỗi tại: https://github.com/ntd4996/claude-code-vietnamese-fix/issues",
               file=sys.stderr)
         if os.path.exists(backup_path):
             shutil.copy2(backup_path, file_path)
@@ -536,7 +535,7 @@ def show_help():
     print("  python3 patcher.py --path FILE  Fix file cụ thể")
     print("  python3 patcher.py --help       Hiển thị hướng dẫn")
     print("")
-    print("https://github.com/manhit96/claude-code-vietnamese-fix")
+    print("https://github.com/ntd4996/claude-code-vietnamese-fix")
 
 
 def main():

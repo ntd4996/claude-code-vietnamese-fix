@@ -1,14 +1,15 @@
 #
 # Claude Code Vietnamese IME Fix - Installer (Windows)
+# Author: datnt (https://github.com/ntd4996)
 # Clone repo va tu dong chay fix
 #
 # Usage:
-#   irm https://raw.githubusercontent.com/manhit96/claude-code-vietnamese-fix/main/install.ps1 | iex
+#   irm https://raw.githubusercontent.com/ntd4996/claude-code-vietnamese-fix/main/install.ps1 | iex
 #
 
 $ErrorActionPreference = "Stop"
 
-$RepoUrl = "https://github.com/manhit96/claude-code-vietnamese-fix.git"
+$RepoUrl = "https://github.com/ntd4996/claude-code-vietnamese-fix.git"
 $InstallDir = Join-Path $env:USERPROFILE ".claude-vn-fix"
 
 Write-Host ""
