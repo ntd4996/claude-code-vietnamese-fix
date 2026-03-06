@@ -246,9 +246,10 @@ def generate_fix_binary(v, original_length):
     off = v['update_offset']
     extra = v['extra_calls'] or ''
 
-    # Pick a 1-char state variable that doesn't shadow the input variable
-    # (avoids Temporal Dead Zone ReferenceError inside the let declaration)
-    sv = next(c for c in '_qwertyuiop' if c != inp)
+    # Pick a 1-char state variable that doesn't conflict with any existing name
+    # (avoids TDZ ReferenceError and function name conflicts)
+    used = {inp, txt, off, key, cur}
+    sv = next(c for c in '_qwertyuiop' if c not in used)
 
     fix = (
         f'if(!{key}.backspace&&!{key}.delete&&{inp}.includes("\\x7F"))'
